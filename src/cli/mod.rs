@@ -49,10 +49,22 @@ impl Command {
             let transition = args.clone().into();
             let next = curr.apply(transition)?;
 
+            let prefix = match global.dry_run {
+                true => "[DRY RUN] ",
+                false => "",
+            };
+
             println!(
-                "Updated package {} from version {} to {}",
-                package.name, curr, next
-            )
+                "{}Updated package {} from version {} to {}",
+                prefix, package.name, curr, next
+            );
+
+            if !global.dry_run {
+                let contents = std::fs::read_to_string(package.manifest_path.clone())?;
+                let mut doc = contents.parse::<toml_edit::DocumentMut>()?;
+                doc["package"]["version"] = next.to_string().into();
+                std::fs::write(package.manifest_path.clone(), doc.to_string())?;
+            }
         }
         Ok(())
     }
