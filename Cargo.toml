@@ -1,0 +1,16 @@
+[package]
+name = "cargo-goose"
+description = "A strict, explicit SemVer CLI with first-class prerelease support."
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.100"
+cargo_metadata = "0.23.1"
+once_cell = "1.21.3"
+regex = "1.12.2"
+toml_edit = { version = "0.24.0", features = ["serde"] }
+
+[dependencies.clap]
+version = "4.5.54"
+features = ["derive"]
