@@ -1,9 +1,10 @@
 [package]
 name = "cargo-goose"
 description = "A strict, explicit SemVer CLI with first-class prerelease support."
-version = "0.1.1"
+version = "0.1.2"
 license = "Apache-2.0"
 edition = "2024"
+repository = "https://github.com/mozilla-ai/cargo-goose"
 
 [[bin]]
 name = "cargo-goose"
