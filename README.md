@@ -1,5 +1,18 @@
 # cargo-goose 🪿
+
+<p align="center">
 A strict, explicit SemVer CLI with first-class prerelease support.
+</p>
+
+<p align="center">
+  <a href="https://github.com/mozilla-ai/cargo-goose/actions/workflows/ci.yml">
+    <img src="https://github.com/mozilla-ai/cargo-goose/actions/workflows/ci.yml/badge.svg" alt="CI">
+  </a>
+  <a href="https://github.com/mozilla-ai/cargo-goose/actions/workflows/release.yml">
+    <img src="https://github.com/mozilla-ai/cargo-goose/actions/workflows/release.yml/badge.svg" alt="Lint">
+  </a>
+</p>
+
 
 ## Installation
 
