@@ -136,3 +136,56 @@ pub enum ReleaseLevel {
     Minor,
     Major,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_prerelease_semver_eq() {
+        let gold = cargo_metadata::semver::Prerelease::new("beta.1").unwrap();
+        let pred = Prerelease {
+            ident: "beta".to_string(),
+            iteration: 1,
+        };
+
+        assert_eq!(gold, pred.to_semver());
+    }
+
+    #[test]
+    fn test_prerelease_parse_successful() {
+        let result = Prerelease::parse("beta.1");
+
+        assert!(result.is_ok());
+
+        assert_eq!(
+            result.unwrap().to_semver(),
+            Prerelease {
+                ident: "beta".to_string(),
+                iteration: 1
+            }
+            .to_semver()
+        );
+    }
+
+    #[test]
+    fn test_malformed_prerelease_no_iteration() {
+        let result = Prerelease::parse("beta");
+
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_malformed_prerelease_no_identifier() {
+        let result = Prerelease::parse("1");
+
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_prerelease_increment() {
+        let pr = Prerelease::parse("beta.1").unwrap().increment();
+
+        assert_eq!(pr.iteration, 2);
+    }
+}
