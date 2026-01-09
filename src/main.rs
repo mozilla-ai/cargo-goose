@@ -6,6 +6,7 @@ use crate::cli::CargoGooseCli;
 
 mod cli;
 mod metadata;
+mod utils;
 mod version;
 
 fn main() -> Result<()> {

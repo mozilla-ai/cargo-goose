@@ -85,6 +85,8 @@ dependencies = [
  "clap",
  "once_cell",
  "regex",
+ "serde",
+ "serde_json",
  "toml_edit",
 ]
 

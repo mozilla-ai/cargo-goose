@@ -64,7 +64,7 @@ impl SemanticVersion {
                 ident: pre,
                 iteration: 1,
             })?
-            .with_metadata(metadata)
+            .with_build(metadata)
     }
 
     fn increment_prerelease(&self, metadata: Option<String>) -> Result<Self> {
@@ -77,7 +77,7 @@ impl SemanticVersion {
 
         self.clone()
             .with_prerelease(prerelease)?
-            .with_metadata(metadata)
+            .with_build(metadata)
     }
 
     fn transition_prerelease(&self, pre: String, metadata: Option<String>) -> Result<Self> {
@@ -97,7 +97,7 @@ impl SemanticVersion {
 
         self.clone()
             .with_prerelease(new_prerelease)?
-            .with_metadata(metadata)
+            .with_build(metadata)
     }
 
     fn finalize_release(&self, metadata: Option<String>) -> Result<Self> {
@@ -105,7 +105,7 @@ impl SemanticVersion {
             bail!("Can only finalize release from a prerelease version.");
         }
 
-        self.clone().clear_prerelease()?.with_metadata(metadata)
+        self.clone().clear_prerelease()?.with_build(metadata)
     }
 
     fn bump_release(&self, level: ReleaseLevel, metadata: Option<String>) -> Result<Self> {
@@ -113,7 +113,7 @@ impl SemanticVersion {
             bail!("Cannot bump version line of a pre-release version.");
         }
 
-        self.clone().bump_level(level)?.with_metadata(metadata)
+        self.clone().bump_level(level)?.with_build(metadata)
     }
 }
 
@@ -238,7 +238,7 @@ mod tests {
     }
 
     #[test]
-    fn finalize_prerelease_with_metadata() {
+    fn finalize_prerelease_with_build() {
         let v = sv("1.2.3-rc.4");
 
         let next = v
@@ -274,7 +274,7 @@ mod tests {
     }
 
     #[test]
-    fn bump_release_with_metadata() {
+    fn bump_release_with_build() {
         let v = sv("1.2.3");
 
         let next = v

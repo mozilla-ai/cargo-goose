@@ -2,7 +2,7 @@ use anyhow::{Context, Result, bail};
 use cargo_metadata::semver::Version;
 use clap::ValueEnum;
 
-#[derive(Debug, Clone, Ord, PartialOrd, Eq, PartialEq)]
+#[derive(Debug, Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
 pub struct SemanticVersion(Version);
 
 impl std::fmt::Display for SemanticVersion {
@@ -47,7 +47,14 @@ impl SemanticVersion {
         Ok(self)
     }
 
-    pub fn with_metadata(mut self, metadata: Option<String>) -> Result<Self> {
+    pub fn build(&self) -> Option<String> {
+        match self.0.build.is_empty() {
+            true => None,
+            false => Some(self.0.build.to_string()),
+        }
+    }
+
+    pub fn with_build(mut self, metadata: Option<String>) -> Result<Self> {
         self.0.build = match metadata {
             Some(m) => cargo_metadata::semver::BuildMetadata::new(&m)
                 .with_context(|| "metadata validated by semver")?,
@@ -142,6 +149,22 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_build_empty() {
+        let v: SemanticVersion = Version::parse("1.2.3").unwrap().try_into().unwrap();
+        let build = v.build();
+
+        assert!(build.is_none());
+    }
+
+    #[test]
+    fn test_build_not_empty() {
+        let v: SemanticVersion = Version::parse("1.2.3+asdf").unwrap().try_into().unwrap();
+        let build = v.build();
+
+        assert_eq!(build, Some("asdf".to_string()))
+    }
+
+    #[test]
     fn test_semantic_version_display() {
         let v = Version::parse("1.2.3").unwrap();
         let sv = SemanticVersion::try_from(v).unwrap();
@@ -177,11 +200,11 @@ mod tests {
     }
 
     #[test]
-    fn test_semantic_version_with_metadata() {
+    fn test_semantic_version_with_build() {
         let v = Version::parse("1.2.3").unwrap();
         let sv = SemanticVersion::try_from(v).unwrap();
 
-        let with_meta = sv.with_metadata(Some("build.42".to_string())).unwrap();
+        let with_meta = sv.with_build(Some("build.42".to_string())).unwrap();
 
         assert_eq!(with_meta.to_string(), "1.2.3+build.42");
     }
@@ -191,7 +214,7 @@ mod tests {
         let v = Version::parse("1.2.3").unwrap();
         let sv = SemanticVersion::try_from(v).unwrap();
 
-        let result = sv.with_metadata(Some("invalid metadata".to_string()));
+        let result = sv.with_build(Some("invalid metadata".to_string()));
 
         assert!(result.is_err());
     }

@@ -33,6 +33,7 @@ impl Cli {
 #[derive(Debug, Subcommand)]
 pub enum Command {
     Bump(commands::BumpArgs),
+    CurrentVersion(commands::CurrentVersionArgs),
 }
 
 impl Command {
@@ -43,6 +44,7 @@ impl Command {
     ) -> Result<()> {
         match self {
             Command::Bump(args) => self.bump(metadata, args, global),
+            Command::CurrentVersion(args) => args.execute(metadata, global),
         }
     }
 
