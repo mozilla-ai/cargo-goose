@@ -1,0 +1,64 @@
+name: current-version
+description: Get the current Cargo workspace version via cargo-goose
+
+inputs:
+  force-single-version:
+    description: Assert all selected packages share the same version
+    required: false
+    default: "false"
+
+outputs:
+  version:
+    description: Full version string (e.g. 1.2.3-beta.4)
+    value: ${{ steps.parse.outputs.version }}
+  major:
+    description: Major version
+    value: ${{ steps.parse.outputs.major }}
+  minor:
+    description: Minor version
+    value: ${{ steps.parse.outputs.minor }}
+  patch:
+    description: Patch version
+    value: ${{ steps.parse.outputs.patch }}
+  pre:
+    description: Prerelease identifier (e.g. beta)
+    value: ${{ steps.parse.outputs.pre }}
+  iteration:
+    description: Prerelease iteration
+    value: ${{ steps.parse.outputs.iteration }}
+  build:
+    description: Build metadata
+    value: ${{ steps.parse.outputs.build }}
+  is_prerelease:
+    description: Whether this is a prerelease
+    value: ${{ steps.parse.outputs.is_prerelease }}
+
+runs:
+  using: composite
+  steps:
+    - uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+
+    - run: cargo install cargo-goose
+      shell: bash
+
+    - id: get
+      run: |
+        ARGS="current-version --format=json"
+        if [ "${{ inputs.force-single-version }}" = "true" ]; then
+          ARGS="$ARGS --force-single-version"
+        fi
+
+        cargo goose $ARGS > version.json
+      shell: bash
+
+    - id: parse
+      run: |
+        jq -r '
+          .packages[0] |
+          to_entries[] |
+          "\(.key)=\(.value // "")"
+        ' version.json >> "$GITHUB_OUTPUT"
+      shell: bash
