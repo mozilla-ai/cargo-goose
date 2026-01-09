@@ -57,8 +57,12 @@ runs:
     - id: parse
       run: |
         jq -r '
-          .packages[0] |
-          to_entries[] |
-          "\(.key)=\(.value // "")"
+          if has("packages") then
+            .packages[0]
+          else
+            .
+          end
+          | to_entries[]
+          | "\(.key)=\(.value // "")"
         ' version.json >> "$GITHUB_OUTPUT"
       shell: bash
