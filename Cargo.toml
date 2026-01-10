@@ -11,8 +11,14 @@ name = "cargo-goose"
 path = "bin/cli.rs"
 required-features = ["cli"]
 
+[[bin]]
+name = "generate-json-schemas"
+path = "bin/utils/generate-json-schemas.rs"
+required-features = ["_internal"]
+
 [features]
 default = ["cli"]
+_internal = []
 cli = ["dep:clap"]
 
 [dependencies]
